@@ -83,7 +83,9 @@ class _SalesPageState extends State<SalesPage> {
                           ),
                           child: ListTile(
                             leading: const CircleAvatar(
-                              child: Icon(Icons.receipt_long),
+                              child: Icon(
+                                Icons.receipt_long,
+                              ),
                             ),
                             title: Text(
                               'بيع رقم ${index + 1}',
@@ -128,8 +130,12 @@ class _SalesPageState extends State<SalesPage> {
           const SizedBox(height: 20),
           ElevatedButton.icon(
             onPressed: _openNewSale,
-            icon: const Icon(Icons.add_shopping_cart),
-            label: const Text('إضافة أول عملية بيع'),
+            icon: const Icon(
+              Icons.add_shopping_cart,
+            ),
+            label: const Text(
+              'إضافة أول عملية بيع',
+            ),
           ),
         ],
       ),
@@ -157,7 +163,8 @@ class _NewSalePageState extends State<NewSalePage> {
   final TextEditingController discountController =
       TextEditingController();
 
-  DiscountType discountType = DiscountType.amount;
+  DiscountType discountType =
+      DiscountType.amount;
 
   @override
   void initState() {
@@ -195,7 +202,9 @@ class _NewSalePageState extends State<NewSalePage> {
 
   int _quantityInCart(String productId) {
     return items
-        .where((item) => item.productId == productId)
+        .where(
+          (item) => item.productId == productId,
+        )
         .fold(
           0,
           (sum, item) => sum + item.quantity,
@@ -227,7 +236,8 @@ class _NewSalePageState extends State<NewSalePage> {
       return 0;
     }
 
-    if (discountType == DiscountType.percentage) {
+    if (discountType ==
+        DiscountType.percentage) {
       if (value > 100) {
         return subtotal;
       }
@@ -239,7 +249,8 @@ class _NewSalePageState extends State<NewSalePage> {
   }
 
   double get total {
-    final result = subtotal - discountValue;
+    final result =
+        subtotal - discountValue;
 
     return result < 0 ? 0 : result;
   }
@@ -273,7 +284,8 @@ class _NewSalePageState extends State<NewSalePage> {
       return;
     }
 
-    final selected = await showModalBottomSheet<Product>(
+    final selected =
+        await showModalBottomSheet<Product>(
       context: context,
       isScrollControlled: true,
       builder: (context) {
@@ -282,7 +294,8 @@ class _NewSalePageState extends State<NewSalePage> {
           child: SafeArea(
             child: SizedBox(
               height:
-                  MediaQuery.of(context).size.height * 0.75,
+                  MediaQuery.of(context).size.height *
+                      0.75,
               child: Column(
                 children: [
                   const Padding(
@@ -291,18 +304,23 @@ class _NewSalePageState extends State<NewSalePage> {
                       'اختر المنتج',
                       style: TextStyle(
                         fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                        fontWeight:
+                            FontWeight.bold,
                       ),
                     ),
                   ),
                   Expanded(
                     child: ListView.builder(
                       itemCount: products.length,
-                      itemBuilder: (context, index) {
-                        final product = products[index];
+                      itemBuilder:
+                          (context, index) {
+                        final product =
+                            products[index];
 
                         final alreadyInCart =
-                            _quantityInCart(product.id);
+                            _quantityInCart(
+                          product.id,
+                        );
 
                         final available =
                             product.quantity -
@@ -316,8 +334,10 @@ class _NewSalePageState extends State<NewSalePage> {
                           ),
                           title: Text(
                             product.name,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
+                            style:
+                                const TextStyle(
+                              fontWeight:
+                                  FontWeight.bold,
                             ),
                           ),
                           subtitle: Text(
@@ -330,7 +350,8 @@ class _NewSalePageState extends State<NewSalePage> {
                             'المتاح: $available',
                           ),
                           isThreeLine: true,
-                          enabled: available > 0,
+                          enabled:
+                              available > 0,
                           onTap: available > 0
                               ? () {
                                   Navigator.pop(
@@ -358,15 +379,20 @@ class _NewSalePageState extends State<NewSalePage> {
     _addProductToSale(selected);
   }
 
-  void _addProductToSale(Product product) {
-    final existingIndex = items.indexWhere(
-      (item) => item.productId == product.id,
+  void _addProductToSale(
+    Product product,
+  ) {
+    final existingIndex =
+        items.indexWhere(
+      (item) =>
+          item.productId == product.id,
     );
 
     final alreadyInCart =
         _quantityInCart(product.id);
 
-    if (alreadyInCart >= product.quantity) {
+    if (alreadyInCart >=
+        product.quantity) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
@@ -379,14 +405,20 @@ class _NewSalePageState extends State<NewSalePage> {
 
     setState(() {
       if (existingIndex >= 0) {
-        final oldItem = items[existingIndex];
+        final oldItem =
+            items[existingIndex];
 
-        items[existingIndex] = SaleItem(
-          productId: oldItem.productId,
-          productName: oldItem.productName,
-          quantity: oldItem.quantity + 1,
+        items[existingIndex] =
+            SaleItem(
+          productId:
+              oldItem.productId,
+          productName:
+              oldItem.productName,
+          quantity:
+              oldItem.quantity + 1,
           price: oldItem.price,
-          purchasePrice: oldItem.purchasePrice,
+          purchasePrice:
+              oldItem.purchasePrice,
           size: oldItem.size,
           color: oldItem.color,
         );
@@ -397,7 +429,8 @@ class _NewSalePageState extends State<NewSalePage> {
             productName: product.name,
             quantity: 1,
             price: product.price,
-            purchasePrice: product.purchasePrice,
+            purchasePrice:
+                product.purchasePrice,
             size: product.size,
             color: product.color,
           ),
@@ -409,7 +442,8 @@ class _NewSalePageState extends State<NewSalePage> {
   void _increaseItem(int index) {
     final item = items[index];
 
-    final product = _findProduct(item.productId);
+    final product =
+        _findProduct(item.productId);
 
     if (product == null) {
       return;
@@ -417,10 +451,13 @@ class _NewSalePageState extends State<NewSalePage> {
 
     final available =
         product.quantity -
-            _quantityInCart(product.id);
+            _quantityInCart(
+              product.id,
+            );
 
     if (available <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
+      ScaffoldMessenger.of(context)
+          .showSnackBar(
         const SnackBar(
           content: Text(
             'لا توجد كمية إضافية في المخزون',
@@ -436,7 +473,8 @@ class _NewSalePageState extends State<NewSalePage> {
         productName: item.productName,
         quantity: item.quantity + 1,
         price: item.price,
-        purchasePrice: item.purchasePrice,
+        purchasePrice:
+            item.purchasePrice,
         size: item.size,
         color: item.color,
       );
@@ -459,7 +497,8 @@ class _NewSalePageState extends State<NewSalePage> {
         productName: item.productName,
         quantity: item.quantity - 1,
         price: item.price,
-        purchasePrice: item.purchasePrice,
+        purchasePrice:
+            item.purchasePrice,
         size: item.size,
         color: item.color,
       );
@@ -474,7 +513,8 @@ class _NewSalePageState extends State<NewSalePage> {
 
   Future<void> _saveSale() async {
     if (items.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
+      ScaffoldMessenger.of(context)
+          .showSnackBar(
         const SnackBar(
           content: Text(
             'أضف منتجًا واحدًا على الأقل',
@@ -485,7 +525,8 @@ class _NewSalePageState extends State<NewSalePage> {
     }
 
     if (paid < 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
+      ScaffoldMessenger.of(context)
+          .showSnackBar(
         const SnackBar(
           content: Text(
             'المبلغ المدفوع لا يمكن أن يكون سالبًا',
@@ -496,7 +537,8 @@ class _NewSalePageState extends State<NewSalePage> {
     }
 
     if (paid > total) {
-      ScaffoldMessenger.of(context).showSnackBar(
+      ScaffoldMessenger.of(context)
+          .showSnackBar(
         const SnackBar(
           content: Text(
             'المبلغ المدفوع أكبر من إجمالي البيع',
@@ -514,9 +556,11 @@ class _NewSalePageState extends State<NewSalePage> {
         await NovaStorage.getProducts();
 
     for (final saleItem in items) {
-      final index = currentProducts.indexWhere(
+      final index =
+          currentProducts.indexWhere(
         (product) =>
-            product.id == saleItem.productId,
+            product.id ==
+            saleItem.productId,
       );
 
       if (index < 0) {
@@ -526,7 +570,8 @@ class _NewSalePageState extends State<NewSalePage> {
           saving = false;
         });
 
-        ScaffoldMessenger.of(context).showSnackBar(
+        ScaffoldMessenger.of(context)
+            .showSnackBar(
           SnackBar(
             content: Text(
               'المنتج "${saleItem.productName}" غير موجود',
@@ -537,18 +582,23 @@ class _NewSalePageState extends State<NewSalePage> {
         return;
       }
 
-      final product = currentProducts[index];
+      final product =
+          currentProducts[index];
 
-      if (saleItem.quantity > product.quantity) {
+      if (saleItem.quantity >
+          product.quantity) {
         if (!mounted) return;
 
         setState(() {
           saving = false;
         });
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          Text(
-            'الكمية غير كافية للمنتج "${product.name}"',
+        ScaffoldMessenger.of(context)
+            .showSnackBar(
+          SnackBar(
+            content: Text(
+              'الكمية غير كافية للمنتج "${product.name}"',
+            ),
           ),
         );
 
@@ -557,13 +607,16 @@ class _NewSalePageState extends State<NewSalePage> {
     }
 
     for (final saleItem in items) {
-      final index = currentProducts.indexWhere(
+      final index =
+          currentProducts.indexWhere(
         (product) =>
-            product.id == saleItem.productId,
+            product.id ==
+            saleItem.productId,
       );
 
       if (index >= 0) {
-        currentProducts[index].quantity -=
+        currentProducts[index]
+                .quantity -=
             saleItem.quantity;
       }
     }
@@ -572,28 +625,37 @@ class _NewSalePageState extends State<NewSalePage> {
       currentProducts,
     );
 
-    final sales = await NovaStorage.getSales();
+    final sales =
+        await NovaStorage.getSales();
 
     final sale = Sale(
       id: DateTime.now()
           .microsecondsSinceEpoch
           .toString(),
-      date: _formatDateTime(DateTime.now()),
+      date: _formatDateTime(
+        DateTime.now(),
+      ),
       customerId: '',
-      items: List<SaleItem>.from(items),
+      items:
+          List<SaleItem>.from(items),
       discount: Discount(
         type: discountType,
-        value: double.tryParse(
-              discountController.text.trim(),
-            ) ??
-            0,
+        value:
+            double.tryParse(
+                  discountController
+                      .text
+                      .trim(),
+                ) ??
+                0,
       ),
       paid: paid,
     );
 
     sales.add(sale);
 
-    await NovaStorage.saveSales(sales);
+    await NovaStorage.saveSales(
+      sales,
+    );
 
     if (!mounted) return;
 
@@ -601,7 +663,8 @@ class _NewSalePageState extends State<NewSalePage> {
       saving = false;
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(
+    ScaffoldMessenger.of(context)
+        .showSnackBar(
       const SnackBar(
         content: Text(
           'تم حفظ عملية البيع بنجاح',
@@ -610,30 +673,51 @@ class _NewSalePageState extends State<NewSalePage> {
     );
 
     await Future.delayed(
-      const Duration(milliseconds: 400),
+      const Duration(
+        milliseconds: 400,
+      ),
     );
 
     if (!mounted) return;
 
-    Navigator.pop(context, sale);
+    Navigator.pop(
+      context,
+      sale,
+    );
   }
 
-  String _formatDateTime(DateTime date) {
+  String _formatDateTime(
+    DateTime date,
+  ) {
     final day =
-        date.day.toString().padLeft(2, '0');
+        date.day.toString().padLeft(
+              2,
+              '0',
+            );
 
     final month =
-        date.month.toString().padLeft(2, '0');
+        date.month.toString().padLeft(
+              2,
+              '0',
+            );
 
-    final year = date.year.toString();
+    final year =
+        date.year.toString();
 
     final hour =
-        date.hour.toString().padLeft(2, '0');
+        date.hour.toString().padLeft(
+              2,
+              '0',
+            );
 
     final minute =
-        date.minute.toString().padLeft(2, '0');
+        date.minute.toString().padLeft(
+              2,
+              '0',
+            );
 
-    return '$year/$month/$day - $hour:$minute';
+    return '$year/$month/$day - '
+        '$hour:$minute';
   }
 
   Widget _summaryRow(
@@ -642,25 +726,29 @@ class _NewSalePageState extends State<NewSalePage> {
     bool bold = false,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(
+      padding:
+          const EdgeInsets.symmetric(
         vertical: 4,
       ),
       child: Row(
         mainAxisAlignment:
-            MainAxisAlignment.spaceBetween,
+            MainAxisAlignment
+                .spaceBetween,
         children: [
           Text(
             title,
             style: TextStyle(
-              fontWeight:
-                  bold ? FontWeight.bold : null,
+              fontWeight: bold
+                  ? FontWeight.bold
+                  : null,
             ),
           ),
           Text(
             '${value.toStringAsFixed(0)} دج',
             style: TextStyle(
-              fontWeight:
-                  bold ? FontWeight.bold : null,
+              fontWeight: bold
+                  ? FontWeight.bold
+                  : null,
             ),
           ),
         ],
@@ -669,33 +757,44 @@ class _NewSalePageState extends State<NewSalePage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context,
+  ) {
     return Directionality(
-      textDirection: TextDirection.rtl,
+      textDirection:
+          TextDirection.rtl,
       child: Scaffold(
         appBar: AppBar(
           title: const Text(
             'بيع جديد',
             style: TextStyle(
-              fontWeight: FontWeight.bold,
+              fontWeight:
+                  FontWeight.bold,
             ),
           ),
           centerTitle: true,
         ),
         body: loading
             ? const Center(
-                child: CircularProgressIndicator(),
+                child:
+                    CircularProgressIndicator(),
               )
             : ListView(
-                padding: const EdgeInsets.all(16),
+                padding:
+                    const EdgeInsets.all(
+                  16,
+                ),
                 children: [
                   SizedBox(
                     height: 55,
-                    child: FilledButton.icon(
-                      onPressed:
-                          saving ? null : _chooseProduct,
+                    child:
+                        FilledButton.icon(
+                      onPressed: saving
+                          ? null
+                          : _chooseProduct,
                       icon: const Icon(
-                        Icons.add_shopping_cart,
+                        Icons
+                            .add_shopping_cart,
                       ),
                       label: const Text(
                         'إضافة منتج للبيع',
@@ -703,25 +802,33 @@ class _NewSalePageState extends State<NewSalePage> {
                     ),
                   ),
 
-                  const SizedBox(height: 16),
+                  const SizedBox(
+                    height: 16,
+                  ),
 
                   if (items.isEmpty)
                     Card(
                       child: Padding(
                         padding:
-                            const EdgeInsets.all(24),
+                            const EdgeInsets
+                                .all(24),
                         child: Column(
                           children: const [
                             Icon(
-                              Icons.shopping_cart_outlined,
+                              Icons
+                                  .shopping_cart_outlined,
                               size: 60,
                             ),
-                            SizedBox(height: 10),
+                            SizedBox(
+                              height: 10,
+                            ),
                             Text(
                               'لم تتم إضافة أي منتج',
-                              style: TextStyle(
+                              style:
+                                  TextStyle(
                                 fontWeight:
-                                    FontWeight.bold,
+                                    FontWeight
+                                        .bold,
                               ),
                             ),
                           ],
@@ -730,19 +837,26 @@ class _NewSalePageState extends State<NewSalePage> {
                     ),
 
                   if (items.isNotEmpty)
-                    ...items.asMap().entries.map(
+                    ...items
+                        .asMap()
+                        .entries
+                        .map(
                       (entry) {
-                        final index = entry.key;
-                        final item = entry.value;
+                        final index =
+                            entry.key;
+                        final item =
+                            entry.value;
 
                         return Card(
                           margin:
-                              const EdgeInsets.only(
+                              const EdgeInsets
+                                  .only(
                             bottom: 10,
                           ),
                           child: Padding(
                             padding:
-                                const EdgeInsets.all(12),
+                                const EdgeInsets
+                                    .all(12),
                             child: Column(
                               crossAxisAlignment:
                                   CrossAxisAlignment
@@ -758,14 +872,17 @@ class _NewSalePageState extends State<NewSalePage> {
                                       width: 10,
                                     ),
                                     Expanded(
-                                      child: Text(
-                                        item.productName,
+                                      child:
+                                          Text(
+                                        item
+                                            .productName,
                                         style:
                                             const TextStyle(
                                           fontWeight:
                                               FontWeight
                                                   .bold,
-                                          fontSize: 17,
+                                          fontSize:
+                                              17,
                                         ),
                                       ),
                                     ),
@@ -777,7 +894,8 @@ class _NewSalePageState extends State<NewSalePage> {
                                                   _removeItem(
                                                     index,
                                                   ),
-                                      icon: const Icon(
+                                      icon:
+                                          const Icon(
                                         Icons
                                             .delete_outline,
                                       ),
@@ -825,14 +943,16 @@ class _NewSalePageState extends State<NewSalePage> {
                                                       ),
                                           icon:
                                               const Icon(
-                                            Icons.remove,
+                                            Icons
+                                                .remove,
                                           ),
                                         ),
                                         Text(
                                           '${item.quantity}',
                                           style:
                                               const TextStyle(
-                                            fontSize: 18,
+                                            fontSize:
+                                                18,
                                             fontWeight:
                                                 FontWeight
                                                     .bold,
@@ -848,7 +968,8 @@ class _NewSalePageState extends State<NewSalePage> {
                                                       ),
                                           icon:
                                               const Icon(
-                                            Icons.add,
+                                            Icons
+                                                .add,
                                           ),
                                         ),
                                       ],
@@ -858,8 +979,10 @@ class _NewSalePageState extends State<NewSalePage> {
                                       style:
                                           const TextStyle(
                                         fontWeight:
-                                            FontWeight.bold,
-                                        fontSize: 17,
+                                            FontWeight
+                                                .bold,
+                                        fontSize:
+                                            17,
                                       ),
                                     ),
                                   ],
@@ -871,26 +994,34 @@ class _NewSalePageState extends State<NewSalePage> {
                       },
                     ),
 
-                  const SizedBox(height: 8),
+                  const SizedBox(
+                    height: 8,
+                  ),
 
                   Card(
                     child: Padding(
                       padding:
-                          const EdgeInsets.all(16),
+                          const EdgeInsets
+                              .all(16),
                       child: Column(
                         crossAxisAlignment:
-                            CrossAxisAlignment.stretch,
+                            CrossAxisAlignment
+                                .stretch,
                         children: [
                           const Text(
                             'الخصم',
-                            style: TextStyle(
+                            style:
+                                TextStyle(
                               fontWeight:
-                                  FontWeight.bold,
+                                  FontWeight
+                                      .bold,
                               fontSize: 18,
                             ),
                           ),
 
-                          const SizedBox(height: 10),
+                          const SizedBox(
+                            height: 10,
+                          ),
 
                           Row(
                             children: [
@@ -902,16 +1033,21 @@ class _NewSalePageState extends State<NewSalePage> {
                                   keyboardType:
                                       const TextInputType
                                           .numberWithOptions(
-                                    decimal: true,
+                                    decimal:
+                                        true,
                                   ),
-                                  onChanged: (_) {
-                                    setState(() {});
+                                  onChanged:
+                                      (_) {
+                                    setState(
+                                      () {},
+                                    );
                                   },
                                   decoration:
                                       const InputDecoration(
                                     labelText:
                                         'قيمة الخصم',
-                                    suffixText: 'دج / %',
+                                    suffixText:
+                                        'دج / %',
                                     border:
                                         OutlineInputBorder(),
                                   ),
@@ -932,14 +1068,18 @@ class _NewSalePageState extends State<NewSalePage> {
                                         DiscountType
                                             .amount,
                                     child:
-                                        Text('مبلغ'),
+                                        Text(
+                                      'مبلغ',
+                                    ),
                                   ),
                                   DropdownMenuItem(
                                     value:
                                         DiscountType
                                             .percentage,
                                     child:
-                                        Text('نسبة %'),
+                                        Text(
+                                      'نسبة %',
+                                    ),
                                   ),
                                 ],
                                 onChanged:
@@ -949,10 +1089,12 @@ class _NewSalePageState extends State<NewSalePage> {
                                     return;
                                   }
 
-                                  setState(() {
-                                    discountType =
-                                        value;
-                                  });
+                                  setState(
+                                    () {
+                                      discountType =
+                                          value;
+                                    },
+                                  );
                                 },
                               ),
                             ],
@@ -962,12 +1104,15 @@ class _NewSalePageState extends State<NewSalePage> {
                     ),
                   ),
 
-                  const SizedBox(height: 10),
+                  const SizedBox(
+                    height: 10,
+                  ),
 
                   Card(
                     child: Padding(
                       padding:
-                          const EdgeInsets.all(16),
+                          const EdgeInsets
+                              .all(16),
                       child: Column(
                         children: [
                           _summaryRow(
@@ -998,26 +1143,34 @@ class _NewSalePageState extends State<NewSalePage> {
                     ),
                   ),
 
-                  const SizedBox(height: 10),
+                  const SizedBox(
+                    height: 10,
+                  ),
 
                   Card(
                     child: Padding(
                       padding:
-                          const EdgeInsets.all(16),
+                          const EdgeInsets
+                              .all(16),
                       child: Column(
                         crossAxisAlignment:
-                            CrossAxisAlignment.stretch,
+                            CrossAxisAlignment
+                                .stretch,
                         children: [
                           const Text(
                             'الدفع',
-                            style: TextStyle(
+                            style:
+                                TextStyle(
                               fontWeight:
-                                  FontWeight.bold,
+                                  FontWeight
+                                      .bold,
                               fontSize: 18,
                             ),
                           ),
 
-                          const SizedBox(height: 10),
+                          const SizedBox(
+                            height: 10,
+                          ),
 
                           TextField(
                             controller:
@@ -1027,14 +1180,18 @@ class _NewSalePageState extends State<NewSalePage> {
                                     .numberWithOptions(
                               decimal: true,
                             ),
-                            onChanged: (_) {
-                              setState(() {});
+                            onChanged:
+                                (_) {
+                              setState(
+                                () {},
+                              );
                             },
                             decoration:
                                 const InputDecoration(
                               labelText:
                                   'المبلغ المدفوع',
-                              suffixText: 'دج',
+                              suffixText:
+                                  'دج',
                               prefixIcon:
                                   Icon(
                                 Icons
@@ -1045,7 +1202,9 @@ class _NewSalePageState extends State<NewSalePage> {
                             ),
                           ),
 
-                          const SizedBox(height: 12),
+                          const SizedBox(
+                            height: 12,
+                          ),
 
                           _summaryRow(
                             'الباقي على الزبون',
@@ -1057,22 +1216,25 @@ class _NewSalePageState extends State<NewSalePage> {
                     ),
                   ),
 
-                  const SizedBox(height: 20),
+                  const SizedBox(
+                    height: 20,
+                  ),
 
                   SizedBox(
                     height: 55,
-                    child: FilledButton.icon(
-                      onPressed:
-                          saving
-                              ? null
-                              : _saveSale,
+                    child:
+                        FilledButton.icon(
+                      onPressed: saving
+                          ? null
+                          : _saveSale,
                       icon: saving
                           ? const SizedBox(
                               width: 20,
                               height: 20,
                               child:
                                   CircularProgressIndicator(
-                                strokeWidth: 2,
+                                strokeWidth:
+                                    2,
                               ),
                             )
                           : const Icon(
@@ -1086,7 +1248,9 @@ class _NewSalePageState extends State<NewSalePage> {
                     ),
                   ),
 
-                  const SizedBox(height: 30),
+                  const SizedBox(
+                    height: 30,
+                  ),
                 ],
               ),
       ),
