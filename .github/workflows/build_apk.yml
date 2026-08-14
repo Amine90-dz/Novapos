@@ -20,14 +20,28 @@ jobs:
           flutter-version: '3.35.0'
           channel: stable
 
+      - name: Create Flutter Android project
+        run: |
+          mkdir /tmp/novapos
+          flutter create --platforms=android /tmp/novapos
+
+          cp -r lib /tmp/novapos/
+          cp pubspec.yaml /tmp/novapos/
+
+          if [ -f pubspec.lock ]; then
+            cp pubspec.lock /tmp/novapos/
+          fi
+
       - name: Install dependencies
+        working-directory: /tmp/novapos
         run: flutter pub get
 
       - name: Build APK
+        working-directory: /tmp/novapos
         run: flutter build apk --release
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: NOVAPOS-APK
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: /tmp/novapos/build/app/outputs/flutter-apk/app-release.apk
