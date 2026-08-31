@@ -60,6 +60,190 @@ class _ProductsPageState extends State<ProductsPage> {
     }
   }
 
+  // يفتح قائمة منبثقة بخيارين: إضافة منتج جديد، أو إضافة كمية لمنتج موجود
+  Future<void> _openAddMenu() async {
+    await showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(16),
+        ),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Directionality(
+            textDirection: TextDirection.rtl,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(height: 8),
+                Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).dividerColor,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                ListTile(
+                  leading: const Icon(Icons.add_box_outlined),
+                  title: const Text('إضافة منتج جديد'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _openAddProduct();
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.add_circle_outline),
+                  title: const Text('إضافة كمية لمنتج موجود'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _openAddStock();
+                  },
+                ),
+                const SizedBox(height: 8),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // يفتح قائمة اختيار منتج موجود، ثم مربع حوار لإدخال الكمية المضافة
+  Future<void> _openAddStock() async {
+    if (products.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('لا توجد منتجات بعد، أضف منتجًا أولًا'),
+        ),
+      );
+      return;
+    }
+
+    final selectedProduct = await showModalBottomSheet<Product>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(16),
+        ),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Directionality(
+            textDirection: TextDirection.rtl,
+            child: DraggableScrollableSheet(
+              expand: false,
+              initialChildSize: 0.6,
+              builder: (context, scrollController) {
+                return Column(
+                  children: [
+                    const SizedBox(height: 8),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(
+                        vertical: 8,
+                      ),
+                      child: Text(
+                        'اختر المنتج',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: ListView.builder(
+                        controller: scrollController,
+                        itemCount: products.length,
+                        itemBuilder: (context, index) {
+                          final product = products[index];
+                          return ListTile(
+                            leading: CircleAvatar(
+                              child: Text('${product.quantity}'),
+                            ),
+                            title: Text(product.name),
+                            subtitle: Text(
+                              'المقاس: ${product.size} | '
+                              'اللون: ${product.color}',
+                            ),
+                            onTap: () {
+                              Navigator.pop(context, product);
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+
+    if (selectedProduct == null) return;
+    if (!mounted) return;
+
+    final addedQuantity = await _askQuantityToAdd(selectedProduct);
+    if (addedQuantity == null || addedQuantity <= 0) return;
+
+    selectedProduct.quantity += addedQuantity;
+    await NovaStorage.saveProducts(products);
+
+    if (!mounted) return;
+
+    setState(() {});
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'تمت إضافة $addedQuantity إلى "${selectedProduct.name}"',
+        ),
+      ),
+    );
+  }
+
+  // مربع حوار بسيط لإدخال الكمية المراد إضافتها للمخزون
+  Future<int?> _askQuantityToAdd(Product product) async {
+    final controller = TextEditingController();
+
+    return showDialog<int>(
+      context: context,
+      builder: (context) {
+        return Directionality(
+          textDirection: TextDirection.rtl,
+          child: AlertDialog(
+            title: Text('إضافة كمية: ${product.name}'),
+            content: TextField(
+              controller: controller,
+              keyboardType: TextInputType.number,
+              autofocus: true,
+              decoration: const InputDecoration(
+                labelText: 'الكمية المضافة',
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('إلغاء'),
+              ),
+              FilledButton(
+                onPressed: () {
+                  final value = int.tryParse(controller.text.trim());
+                  Navigator.pop(context, value);
+                },
+                child: const Text('إضافة'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   Future<void> _openEditProduct(Product product) async {
     final updatedProduct = await Navigator.push<Product>(
       context,
@@ -122,9 +306,9 @@ class _ProductsPageState extends State<ProductsPage> {
           centerTitle: true,
         ),
         floatingActionButton: FloatingActionButton.extended(
-          onPressed: _openAddProduct,
+          onPressed: _openAddMenu,
           icon: const Icon(Icons.add),
-          label: const Text('إضافة منتج'),
+          label: const Text('إضافة'),
         ),
         body: loading
             ? const Center(
@@ -237,7 +421,7 @@ class _AddProductPageState extends State<AddProductPage> {
 
   bool saving = false;
 
-  final List<String> sizes = [
+  List<String> sizes = [
     'XS',
     'S',
     'M',
@@ -247,7 +431,7 @@ class _AddProductPageState extends State<AddProductPage> {
     'XXXL',
   ];
 
-  final List<String> colors = [
+  List<String> colors = [
     'أسود',
     'أبيض',
     'أزرق',
@@ -298,6 +482,36 @@ class _AddProductPageState extends State<AddProductPage> {
           ? product.color
           : colors.first;
     }
+
+    _loadCustomSizesColors();
+  }
+
+  // يدمج الألوان والمقاسات المخصّصة (من صفحة "الألوان والمقاسات")
+  // مع القوائم الافتراضية
+  Future<void> _loadCustomSizesColors() async {
+    final customSizes = await NovaStorage.getSizes();
+    final customColors = await NovaStorage.getColors();
+
+    if (!mounted) return;
+
+    setState(() {
+      for (final size in customSizes) {
+        if (!sizes.contains(size)) sizes.add(size);
+      }
+      for (final color in customColors) {
+        if (!colors.contains(color)) colors.add(color);
+      }
+
+      final product = widget.product;
+      if (product != null) {
+        selectedSize = sizes.contains(product.size)
+            ? product.size
+            : sizes.first;
+        selectedColor = colors.contains(product.color)
+            ? product.color
+            : colors.first;
+      }
+    });
   }
 
   @override

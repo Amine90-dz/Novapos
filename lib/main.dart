@@ -2,6 +2,13 @@ import 'package:flutter/material.dart';
 
 import 'products_page.dart';
 import 'sales_page.dart';
+import 'inventory_page.dart';
+import 'reports_page.dart';
+import 'colors_sizes_page.dart';
+import 'customers_page.dart';
+import 'suppliers_page.dart';
+import 'debts_page.dart';
+import 'settings_page.dart';
 
 void main() {
   runApp(const NovaPOSApp());
@@ -26,29 +33,6 @@ class NovaPOSApp extends StatelessWidget {
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
-
-  void _showComingSoon(
-    BuildContext context,
-    String title,
-  ) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(title),
-          content: const Text(
-            'سيتم تفعيل هذا القسم وربطه ببيانات NOVAPOS في الخطوات التالية.',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('حسنًا'),
-            ),
-          ],
-        );
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -115,9 +99,11 @@ class HomePage extends StatelessWidget {
                       icon: Icons.inventory_2,
                       title: 'المخزون',
                       onTap: () {
-                        _showComingSoon(
+                        Navigator.push(
                           context,
-                          'المخزون',
+                          MaterialPageRoute(
+                            builder: (_) => const InventoryPage(),
+                          ),
                         );
                       },
                     ),
@@ -141,9 +127,11 @@ class HomePage extends StatelessWidget {
                       icon: Icons.bar_chart,
                       title: 'التقارير',
                       onTap: () {
-                        _showComingSoon(
+                        Navigator.push(
                           context,
-                          'التقارير',
+                          MaterialPageRoute(
+                            builder: (_) => const ReportsPage(),
+                          ),
                         );
                       },
                     ),
@@ -153,9 +141,11 @@ class HomePage extends StatelessWidget {
                       icon: Icons.palette,
                       title: 'الألوان والمقاسات',
                       onTap: () {
-                        _showComingSoon(
+                        Navigator.push(
                           context,
-                          'الألوان والمقاسات',
+                          MaterialPageRoute(
+                            builder: (_) => const ColorsSizesPage(),
+                          ),
                         );
                       },
                     ),
@@ -165,9 +155,11 @@ class HomePage extends StatelessWidget {
                       icon: Icons.people,
                       title: 'الزبائن',
                       onTap: () {
-                        _showComingSoon(
+                        Navigator.push(
                           context,
-                          'الزبائن',
+                          MaterialPageRoute(
+                            builder: (_) => const CustomersPage(),
+                          ),
                         );
                       },
                     ),
@@ -177,9 +169,11 @@ class HomePage extends StatelessWidget {
                       icon: Icons.account_balance_wallet,
                       title: 'ديون الزبائن',
                       onTap: () {
-                        _showComingSoon(
+                        Navigator.push(
                           context,
-                          'ديون الزبائن',
+                          MaterialPageRoute(
+                            builder: (_) => const CustomerDebtsPage(),
+                          ),
                         );
                       },
                     ),
@@ -189,9 +183,11 @@ class HomePage extends StatelessWidget {
                       icon: Icons.local_shipping,
                       title: 'الموردون',
                       onTap: () {
-                        _showComingSoon(
+                        Navigator.push(
                           context,
-                          'الموردون',
+                          MaterialPageRoute(
+                            builder: (_) => const SuppliersPage(),
+                          ),
                         );
                       },
                     ),
@@ -201,9 +197,11 @@ class HomePage extends StatelessWidget {
                       icon: Icons.money_off,
                       title: 'ديون الموردين',
                       onTap: () {
-                        _showComingSoon(
+                        Navigator.push(
                           context,
-                          'ديون الموردين',
+                          MaterialPageRoute(
+                            builder: (_) => const SupplierDebtsPage(),
+                          ),
                         );
                       },
                     ),
@@ -213,9 +211,11 @@ class HomePage extends StatelessWidget {
                       icon: Icons.settings,
                       title: 'الإعدادات',
                       onTap: () {
-                        _showComingSoon(
+                        Navigator.push(
                           context,
-                          'الإعدادات',
+                          MaterialPageRoute(
+                            builder: (_) => const SettingsPage(),
+                          ),
                         );
                       },
                     ),

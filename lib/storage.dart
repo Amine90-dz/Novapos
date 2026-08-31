@@ -8,6 +8,8 @@ class NovaStorage {
   static const String customersKey = 'novapos_customers';
   static const String suppliersKey = 'novapos_suppliers';
   static const String salesKey = 'novapos_sales';
+  static const String colorsKey = 'novapos_colors';
+  static const String sizesKey = 'novapos_sizes';
 
   static Future<List<Product>> getProducts() async {
     final prefs = await SharedPreferences.getInstance();
@@ -161,6 +163,26 @@ class NovaStorage {
     );
   }
 
+  static Future<List<String>> getColors() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getStringList(colorsKey) ?? [];
+  }
+
+  static Future<void> saveColors(List<String> colors) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(colorsKey, colors);
+  }
+
+  static Future<List<String>> getSizes() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getStringList(sizesKey) ?? [];
+  }
+
+  static Future<void> saveSizes(List<String> sizes) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(sizesKey, sizes);
+  }
+
   static Future<void> clearAllData() async {
     final prefs = await SharedPreferences.getInstance();
 
@@ -168,5 +190,7 @@ class NovaStorage {
     await prefs.remove(customersKey);
     await prefs.remove(suppliersKey);
     await prefs.remove(salesKey);
+    await prefs.remove(colorsKey);
+    await prefs.remove(sizesKey);
   }
 }
