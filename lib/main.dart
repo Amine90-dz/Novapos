@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'models.dart';
 import 'storage.dart';
+import 'theme.dart';
 import 'products_page.dart';
 import 'sales_page.dart';
 import 'inventory_page.dart';
@@ -11,10 +12,6 @@ import 'customers_page.dart';
 import 'suppliers_page.dart';
 import 'debts_page.dart';
 import 'settings_page.dart';
-
-// لون العلامة الأساسي (متناسق مع أيقونة التطبيق)
-const Color kBrandColor = Color(0xFF0D9488);
-const Color kBrandDark = Color(0xFF1A2352);
 
 void main() {
   runApp(const NovaPOSApp());
@@ -246,6 +243,24 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // تصميم متجاوب: عدد الأعمدة يزداد كلما اتسعت الشاشة
+    int crossAxisCount;
+    if (screenWidth < 640) {
+      crossAxisCount = 2;
+    } else if (screenWidth < 960) {
+      crossAxisCount = 3;
+    } else if (screenWidth < 1280) {
+      crossAxisCount = 4;
+    } else {
+      crossAxisCount = 5;
+    }
+
+    // عرض أقصى للمحتوى حتى لا تتمدد البطاقات بشكل مبعثر على الشاشات
+    // العريضة (ويندوز/الحواسيب)
+    const double maxContentWidth = 1000;
+
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
@@ -298,86 +313,117 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                  child: loading
-                      ? const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 24),
-                          child: Center(child: CircularProgressIndicator()),
-                        )
-                      : Row(
-                          children: [
-                            Expanded(
-                              child: _StatCard(
-                                label: 'مبيعات اليوم',
-                                value: '${todaySales.toStringAsFixed(0)} دج',
-                                icon: Icons.trending_up,
-                                color: kBrandColor,
-                              ),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      maxWidth: maxContentWidth,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                      child: loading
+                          ? const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 24),
+                              child:
+                                  Center(child: CircularProgressIndicator()),
+                            )
+                          : Row(
+                              children: [
+                                Expanded(
+                                  child: _StatCard(
+                                    label: 'مبيعات اليوم',
+                                    value:
+                                        '${todaySales.toStringAsFixed(0)} دج',
+                                    icon: Icons.trending_up,
+                                    color: kBrandColor,
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: _StatCard(
+                                    label: 'مخزون منخفض',
+                                    value: '$lowStockCount',
+                                    icon: Icons.warning_amber_rounded,
+                                    color: lowStockCount > 0
+                                        ? const Color(0xFFDC2626)
+                                        : kBrandColor,
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: _StatCard(
+                                    label: 'إجمالي الديون',
+                                    value:
+                                        '${totalDebts.toStringAsFixed(0)} دج',
+                                    icon: Icons
+                                        .account_balance_wallet_outlined,
+                                    color: const Color(0xFFD97706),
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: _StatCard(
-                                label: 'مخزون منخفض',
-                                value: '$lowStockCount',
-                                icon: Icons.warning_amber_rounded,
-                                color: lowStockCount > 0
-                                    ? const Color(0xFFDC2626)
-                                    : kBrandColor,
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: _StatCard(
-                                label: 'إجمالي الديون',
-                                value: '${totalDebts.toStringAsFixed(0)} دج',
-                                icon: Icons.account_balance_wallet_outlined,
-                                color: const Color(0xFFD97706),
-                              ),
-                            ),
-                          ],
-                        ),
-                ),
-              ),
-              SliverPadding(
-                padding: const EdgeInsets.fromLTRB(16, 20, 16, 20),
-                sliver: SliverToBoxAdapter(
-                  child: Text(
-                    'الوصول السريع',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey.shade800,
                     ),
                   ),
                 ),
               ),
-              SliverPadding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-                sliver: SliverGrid(
-                  gridDelegate:
-                      const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                    childAspectRatio: 1.15,
+              SliverToBoxAdapter(
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      maxWidth: maxContentWidth,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 20, 16, 12),
+                      child: Align(
+                        alignment: AlignmentDirectional.centerStart,
+                        child: Text(
+                          'الوصول السريع',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey.shade800,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      final item = _menuItems[index];
-                      return _MenuCard(
-                        icon: item.icon,
-                        title: item.title,
-                        color: item.color,
-                        onTap: () => _openPage(item.builder),
-                      );
-                    },
-                    childCount: _menuItems.length,
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      maxWidth: maxContentWidth,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                      child: GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate:
+                            SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: crossAxisCount,
+                          crossAxisSpacing: 12,
+                          mainAxisSpacing: 12,
+                          childAspectRatio: 1.15,
+                        ),
+                        itemCount: _menuItems.length,
+                        itemBuilder: (context, index) {
+                          final item = _menuItems[index];
+                          return _MenuCard(
+                            icon: item.icon,
+                            title: item.title,
+                            color: item.color,
+                            onTap: () => _openPage(item.builder),
+                          );
+                        },
+                      ),
+                    ),
                   ),
                 ),
               ),
             ],
           ),
+
         ),
       ),
     );
